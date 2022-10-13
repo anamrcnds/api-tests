@@ -46,10 +46,10 @@ router.get('/nome/:string', async(req, res) => {
         try {
             const registro = await Ramal.find( { nome: {"$regex": `${string}` , "$options": "i"}}, {} );
 
-            /*if(!funcionario){
+            if(!funcionario){
                 res.status(422).json({mensagem: 'Funcionário não foi encontrado!'})
                 return
-            }*/
+            }
             
             res.status(200).json({registro});
 
