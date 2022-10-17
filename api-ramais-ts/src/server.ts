@@ -2,12 +2,14 @@ import express, { Express } from 'express'
 import * as mongoose from 'mongoose'
 import ramaisRoutes from './routes/ramaisRoutes'
 import responser from 'responser'
+import throwlhos from 'throwlhos'
 
 const app: Express = express();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(responser)
+app.use(throwlhos.middleware)
 
 app.use('/ramais', ramaisRoutes);
 

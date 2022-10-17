@@ -11,8 +11,8 @@ router.get('/', async (request: Request, response: Response): Promise<void> => {
 
         return response.send_ok('Registros encontrados com sucesso!', { ramais })
         
-    }catch (e) {
-        return response.send_internalServerError('Ocorreu um erro', {error: e})
+    }catch {
+        return response.send_internalServerError('Ocorreu um erro')
     }
 })
 
@@ -46,7 +46,7 @@ router.get('/:ramal', async (request: Request, response: Response): Promise<void
             
             return response.send_ok('Registro encontrado com sucesso!', {funcionario});
             
-        } catch (e) {
+        } catch {
             return response.send_internalServerError('Ocorreu um erro!')
         }
     })
@@ -68,7 +68,7 @@ router.get('/:ramal', async (request: Request, response: Response): Promise<void
             
             return response.send_created('Registro adicionado com sucesso!', {novoRegistro})
             
-        } catch (e) {
+        } catch {
         return response.send_internalServerError('Ocorreu um erro!')
     }
     
@@ -94,7 +94,7 @@ router.patch('/atualizar/:ramal', async (request: Request, response: Response): 
         
         return response.send_ok('Registro atualizado com sucesso!', {atualizacoes});
         
-    } catch (e) {
+    } catch {
         return response.send_internalServerError('Ocorreu um erro!')
     }
 })
@@ -112,7 +112,7 @@ router.delete('/excluir/:ramal', async (request: Request, response: Response): P
         await Ramal.deleteOne({ ramal: ramalUrl })
         
         return response.send_ok('Registro removido!')
-    } catch (e) {
+    } catch {
 
         return response.send_internalServerError('Ocorreu um erro!')
     }
