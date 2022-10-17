@@ -1,5 +1,5 @@
 import { Router, Request, Response} from 'express'
-import { IRamal, Ramal } from '../models/Ramais'
+import Ramal, { IRamal }  from '../models/Ramais'
 
 const router: Router = Router()
 

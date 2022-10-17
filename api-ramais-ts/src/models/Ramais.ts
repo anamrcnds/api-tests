@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose'
 
-interface IRamal{
+export interface IRamal{
     nome: String;
     ramal: Number;
     departamento: String;
@@ -18,4 +18,4 @@ const RamalSchema = new Schema<IRamal>({
 
 const Ramal = model<IRamal>('Ramais', RamalSchema)
 
-export { IRamal, Ramal }
+export default Ramal;
