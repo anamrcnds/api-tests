@@ -18,4 +18,4 @@ const ramalSchema = new Schema<IRamal>({
 
 const Ramal = model<IRamal>('Ramais', ramalSchema)
 
-export default Ramal
+export { IRamal, Ramal }
