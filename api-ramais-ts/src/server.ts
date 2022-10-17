@@ -1,11 +1,13 @@
 import express, { Express } from 'express'
 import * as mongoose from 'mongoose'
 import ramaisRoutes from './routes/ramaisRoutes'
+import responser from 'responser'
 
 const app: Express = express();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(responser)
 
 app.use('/ramais', ramaisRoutes);
 
