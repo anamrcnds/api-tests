@@ -9,7 +9,6 @@ const app: Express = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(responser)
-app.use(throwlhos.middleware)
 
 app.use('/ramais', ramaisRoutes);
 
