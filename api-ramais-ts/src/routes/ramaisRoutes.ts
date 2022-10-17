@@ -25,9 +25,7 @@ router.get('/:ramal', async (req: Request, res: Response): Promise<Response> => 
         try {
             const funcionario: IRamal | null = await Ramal.findOne( { ramal: ramal }, { nome: 1, departamento: 1} )
             
-            if(!funcionario){
-                return res.status(422).json({mensagem: 'Funcionário não foi encontrado!'})
-            }
+            if(!funcionario) return res.status(422).json({mensagem: 'Registro não existe!'})
         
             return res.status(200).json(funcionario);
 
@@ -45,10 +43,7 @@ router.get('/nome/:string', async (req: Request, res: Response): Promise<Respons
             // Linha 55 não aceitou IRamal | null, apenas tipo object - a investigar
             const funcionario: Array<IRamal> = await Ramal.find( { nome: {"$regex": `${string}` , "$options": "i"}}, {} ); 
 
-            if(!funcionario){
-                return res.status(422).json({mensagem: 'Funcionário não foi encontrado!'})
-                
-            }
+            if(!funcionario) return res.status(422).json({mensagem: 'Funcionário não foi encontrado!'})
             
             return res.status(200).json({funcionario});
 
@@ -62,20 +57,18 @@ router.post('/novo', async (req: Request, res: Response): Promise<Response> => {
     
 
     const { nome, ramal, departamento }: { nome: string, ramal: number, departamento: string } = req.body
-    const data_criacao: string = Date();
-    const data_ultima_atualizacao: string = Date();
+    const dataCriacao: string = Date();
+    const dataUltimaAtualizacao: string = Date();
 
-    if(!nome){
-        return  res.status(422).json({erro: `insira nome, ramal e departamento!`});
+    if(!nome) return  res.status(422).json({erro: `insira nome, ramal e departamento!`});
 
-    }
-
-    const novoRegistro: IRamal = {nome, ramal, departamento, data_ultima_atualizacao, data_criacao};
+    const novoRegistro: IRamal = {nome, ramal, departamento, dataUltimaAtualizacao, dataCriacao};
 
     try {
         await Ramal.create(novoRegistro);
 
         return res.status(201).json({mensagem: "Novo ramal adicionado!"});
+
     } catch (e) {
         return res.status(500).json({ erro: e});
     }
@@ -86,15 +79,17 @@ router.post('/novo', async (req: Request, res: Response): Promise<Response> => {
 router.patch('/atualizar/:ramal', async (req: Request, res: Response): Promise<Response> => {
     const ramalUrl: number = Number(req.params.ramal);
 
-    const { nome, ramal, departamento, data_criacao }: {nome: string, ramal: number, departamento: string, data_criacao: string} = req.body;
-    const data_ultima_atualizacao: string = Date();
+    const { nome, ramal, departamento, dataCriacao }
+        : {nome: string, ramal: number, departamento: string, dataCriacao: string} = req.body;
+
+    const dataUltimaAtualizacao: string = Date();
 
     //Verifica se o ramal existe na database
     const ramalValido = await Ramal.exists({ ramal: ramalUrl})
     if(!ramalValido) return res.status(400).json({mensagem: 'Ramal não encontrado'})
 
     try {
-        const atualizacoes: IRamal= { nome, ramal, departamento, data_ultima_atualizacao , data_criacao };
+        const atualizacoes: IRamal= { nome, ramal, departamento, dataUltimaAtualizacao , dataCriacao };
 
         await Ramal.updateOne({ ramal: ramalUrl }, atualizacoes);
 
