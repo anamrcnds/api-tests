@@ -18,22 +18,22 @@
     "sucrase": "^3.28.0",
     "supertest": "^6.3.0",
     "ts-node": "^10.9.1",
+    "tsconfig.json": "^1.0.11",
     "types": "modules",
-    "typescript": "*"
+    "typescript": "^4.8.4"
   },
   "scripts": {
-    "test": "jest", 
+    "test": "jest",
     "dev": "nodemon src/server.ts",
     "build": "sucrase ./src -d ./build --transforms typescript,imports"
   },
   "dependencies": {
     "@types/jest": "^29.2.0",
-    "cors": "^2.8.5",
+    "@types/supertest": "^2.0.12",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "mongoose": "^6.6.5",
     "responser": "^2.5.2",
-    "throwlhos": "^0.0.6",
     "ts-jest": "^29.0.3"
   }
 }

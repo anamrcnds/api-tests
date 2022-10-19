@@ -1,7 +1,5 @@
 "use strict";Object.defineProperty(exports, "__esModule", {value: true}); function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 var _Ramais = require('../models/Ramais'); var _Ramais2 = _interopRequireDefault(_Ramais);
-
 
 //Lista todos os registros
 
@@ -13,13 +11,11 @@ const getListarRegistros = async (request, response) => {
         return response.send_ok('Registros encontrados com sucesso!', { ramais })
         
     }catch (e) {
-        return response.send_internalServerError('Ocorreu um erro')
+        return response.send_internalServerError('Ocorreu um erro!')
     }
 }
 
-
 // Lista o nome e o departamento de um funcionário de acordo com o número do ramal fornecido
-
 const getNomeDep = async (request, response) => {
     
     const ramal = Number(request.params.ramal)
@@ -48,7 +44,7 @@ const getTrechoNome = async (request, response) => {
             
             if(!funcionario) return response.send_unprocessableEntity('Registro inexistente!')
             
-            return response.send_ok('Registro encontrado com sucesso!', {funcionario})
+            return response.send_ok('Registro(s) encontrado(s) com sucesso!', {funcionario})
             
         } catch (e3) {
             return response.send_internalServerError('Ocorreu um erro!')
@@ -59,20 +55,20 @@ const getTrechoNome = async (request, response) => {
 const createRegistro = async (request, response) => {
         
         
-        const { nome, ramal, departamento } = request.body
-        const dataCriacao = Date();
-        const dataUltimaAtualizacao = Date()
+    const { nome, ramal, departamento } = request.body
+    const dataCriacao = Date();
+    const dataUltimaAtualizacao = Date()
+    
+    if(!nome) return response.send_unprocessableEntity('Insira nome, ramal e departamento!')
+    
+    const novoRegistro = {nome, ramal, departamento, dataUltimaAtualizacao, dataCriacao}
+    
+    try {
+        await _Ramais2.default.create(novoRegistro)
         
-        if(!nome) return response.send_unprocessableEntity('Insira nome, ramal e departamento!')
+        return response.send_created('Registro adicionado com sucesso!', {novoRegistro})
         
-        const novoRegistro = {nome, ramal, departamento, dataUltimaAtualizacao, dataCriacao}
-        
-        try {
-            await _Ramais2.default.create(novoRegistro)
-            
-            return response.send_created('Registro adicionado com sucesso!', {novoRegistro})
-            
-        } catch (e4) {
+    } catch (e4) {
         return response.send_internalServerError('Ocorreu um erro!')
     }
 }
@@ -114,7 +110,7 @@ const deleteRegistro = async (request, response) => {
 
         await _Ramais2.default.deleteOne({ ramal: ramalUrl })
         
-        return response.send_ok('Registro removido!')
+        return response.send_ok('Registro removido!', registroValido)
     } catch (e6) {
 
         return response.send_internalServerError('Ocorreu um erro!')

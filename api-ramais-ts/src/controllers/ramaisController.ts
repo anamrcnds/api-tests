@@ -11,7 +11,7 @@ const getListarRegistros = async (request: Request, response: Response): Promise
         return response.send_ok('Registros encontrados com sucesso!', { ramais })
         
     }catch {
-        return response.send_internalServerError('Ocorreu um erro')
+        return response.send_internalServerError('Ocorreu um erro!')
     }
 }
 
@@ -44,7 +44,7 @@ const getTrechoNome = async (request: Request, response: Response): Promise<void
             
             if(!funcionario) return response.send_unprocessableEntity('Registro inexistente!')
             
-            return response.send_ok('Registro encontrado com sucesso!', {funcionario})
+            return response.send_ok('Registro(s) encontrado(s) com sucesso!', {funcionario})
             
         } catch {
             return response.send_internalServerError('Ocorreu um erro!')
@@ -110,7 +110,7 @@ const deleteRegistro = async (request: Request, response: Response): Promise<voi
 
         await Ramal.deleteOne({ ramal: ramalUrl })
         
-        return response.send_ok('Registro removido!')
+        return response.send_ok('Registro removido!', registroValido)
     } catch {
 
         return response.send_internalServerError('Ocorreu um erro!')

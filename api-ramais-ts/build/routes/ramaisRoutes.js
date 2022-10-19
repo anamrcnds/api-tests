@@ -23,7 +23,7 @@ router.get('/nome/:string', _ramaisController.getTrechoNome)
 // Cria um novo registro
 router.post('/novo', _ramaisController.createRegistro)
 
-// Atualiza um novo registro já existente de acordo com o número do ramal fornecido
+// Atualiza um registro existente de acordo com o número do ramal fornecido
 router.patch('/atualizar/:ramal', _ramaisController.updateRegistro)
 
 // Exclui um registro de acordo com o número do ramal fornecido

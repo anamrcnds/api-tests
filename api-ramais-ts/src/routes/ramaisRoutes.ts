@@ -23,7 +23,7 @@ router.get('/nome/:string', getTrechoNome)
 // Cria um novo registro
 router.post('/novo', createRegistro)
 
-// Atualiza um novo registro já existente de acordo com o número do ramal fornecido
+// Atualiza um registro existente de acordo com o número do ramal fornecido
 router.patch('/atualizar/:ramal', updateRegistro)
 
 // Exclui um registro de acordo com o número do ramal fornecido

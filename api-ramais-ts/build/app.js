@@ -8,7 +8,6 @@ app.use(_express2.default.urlencoded({ extended: true }));
 app.use(_express2.default.json());
 app.use(_responser2.default)
 
-
 app.use('/ramais', _ramaisRoutes2.default);
 
 exports. default = app
