@@ -5,51 +5,50 @@ var _Ramais = require('../models/Ramais'); var _Ramais2 = _interopRequireDefault
 
 const getListarRegistros = async (request, response) => {
 
-    try{
-        const ramais = await _Ramais2.default.find()
+  try{
+    const ramais = await _Ramais2.default.find()
 
-        return response.send_ok('Registros encontrados com sucesso!', { ramais })
-        
-    }catch (e) {
-        return response.send_internalServerError('Ocorreu um erro!')
-    }
+    return response.send_ok('Registros encontrados com sucesso!', { ramais })
+      
+  }catch (e) {
+    return response.send_internalServerError('Ocorreu um erro!')
+  }
 }
 
 // Lista o nome e o departamento de um funcionário de acordo com o número do ramal fornecido
 const getNomeDep = async (request, response) => {
     
-    const ramal = Number(request.params.ramal)
-    
-        try {
-            const funcionario = await _Ramais2.default.findOne( { ramal: ramal }, { nome: 1, departamento: 1})
-            
-            if(!funcionario) return response.send_unprocessableEntity('Registro inexistente!')
-        
-            return response.send_ok('Registro encontrado com sucesso!', { funcionario })
+  const ramal = Number(request.params.ramal)
+  
+    try {
+      const registroEncontrado = await _Ramais2.default.findOne( { ramal: ramal }, { nome: 1, departamento: 1})
+      
+      if(!registroEncontrado) return response.send_unprocessableEntity('Registro inexistente!')
+  
+        return response.send_ok('Registro encontrado com sucesso!', { registroEncontrado })
 
-        } catch (e2) {
-            return response.send_internalServerError('Ocorreu um erro!')
-        }
+    } catch (e2) {
+        return response.send_internalServerError('Ocorreu um erro!')
     }
+  }
 
 // Busca um funcionário a partir de uma parte de seu nome
 
 const getTrechoNome = async (request, response) => {
         
-        const string = String(request.params.string)
+    const string = String(request.params.string)
+    
+    try {
+        const registro = await _Ramais2.default.find( { nome: {"$regex": `${string}` , "$options": "i"}}, {} )
         
-        try {
-            // Linha 55 não aceitou IRamal | null, apenas tipo object - a investigar
-            const funcionario = await _Ramais2.default.find( { nome: {"$regex": `${string}` , "$options": "i"}}, {} )
-            
-            if(!funcionario) return response.send_unprocessableEntity('Registro inexistente!')
-            
-            return response.send_ok('Registro(s) encontrado(s) com sucesso!', {funcionario})
-            
-        } catch (e3) {
-            return response.send_internalServerError('Ocorreu um erro!')
-        }
+        if(!registro) return response.send_unprocessableEntity('Registro inexistente!')
+        
+        return response.send_ok('Registro(s) encontrado(s) com sucesso!', {registro})
+        
+    } catch (e3) {
+        return response.send_internalServerError('Ocorreu um erro!')
     }
+  }
 
 // Cria um novo registro
 const createRegistro = async (request, response) => {
@@ -103,7 +102,7 @@ const deleteRegistro = async (request, response) => {
     const ramalUrl = Number(request.params.ramal)
     
     //Verifica se o ramal existe na database
-    const registroValido = await _Ramais2.default.exists({ ramal: ramalUrl})
+    const registroValido = await _Ramais2.default.findOne({ ramal: ramalUrl})
     if(!registroValido) return response.send_badRequest('Ramal não encontrado!')
     
     try {

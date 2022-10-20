@@ -7,7 +7,7 @@ _dotenv2.default.config()
 const PORT = process.env.PORT
 
 _mongoose2.default.
-    connect(`${process.env.MONGODB_URI}`)
+    connect(process.env.MONGODB_URI)
     .then(() => {
         _app2.default.listen(PORT, () => { console.log("Servidor no ar!") } );
     })

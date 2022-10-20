@@ -1,69 +1,105 @@
-// import {expect, jest, test} from '@jest/globals';
-import mongoose from "mongoose";
-import request from 'supertest';
+import mongoose from "mongoose"
+import request from 'supertest'
 import dotenv from 'dotenv'
 import app from '../app'
-import { Console } from "console";
+import Ramal, { IRamal } from "../models/Ramais"
 
 dotenv.config()
 
-beforeAll(async() => {
+beforeEach(async() => {
     await mongoose.connect(`${process.env.MONGODB_URI}`)
 })
 
-afterAll(async() => {
+afterEach(async() => {
     await mongoose.connection.close()
 })
 
-describe('GET /ramais', () => {
-  it('Deve retornar todos os registros de ramais', async () =>{
-      const res = await request(app).get('/ramais')
-      const body = res.body
-      const data: number= res.body.data.ramais.length
+/*it(`GET /ramais
+    Deve retornar todos os registros de ramais`, async () =>{
+
+    const res: any = await request(app).get('/ramais')
+    const body: any = res.body
+    const dataSetSize: number= res.body.data.ramais.length
+    const dataSet: Array<object> = res.body.data.ramais
+    const message: string = res.body.message
+    
+    console.log(dataSetSize);
+    console.log(body);
+    
+    expect(res.statusCode).toBe(200)
+    expect(message).toBe('Registros encontrados com sucesso!')
+    expect(res.statusCode).not.toBe(500)
+    expect(message).not.toBe('Ocorreu um erro!')
+
+    expect(dataSetSize).toBeGreaterThanOrEqual(0)
+
+    if(dataSetSize > 1){
+      dataSet.forEach((registro: {
+                                  _id: string, 
+                                  nome: string, 
+                                  ramal: number, 
+                                  departamento: string, 
+                                  dataUltimaAtualizacao: string;
+                                  dataCriacao: string;
+                                }
+                      ) => {
+                              expect(registro._id).toBeDefined()
+                              expect(registro.nome).toBeDefined()
+                              expect(registro.ramal).toBeDefined()
+                              expect(registro.departamento).toBeDefined()
+                              expect(registro.dataUltimaAtualizacao).toBeDefined()
+                              expect(registro.dataCriacao).toBeDefined()
+                            }
+      )
+    }
+  }
+)
+
+
+it(`GET ramais/:ramal
+    Deve retornar um registro contendo apenas nome e departamento de um registro
+    a partir do número de um ramal existente fornecido`, 
+    async ()=> {
+
+      const numeroRamal: number = 1111
+
+      type registroNomeDpto = {
+          id: string,
+          nome: string, 
+          departamento: string 
+      }
+
+      const res: any = await request(app).get(`/ramais/${numeroRamal}`)
+      const registroEncontrado: registroNomeDpto = res.body.data.registroEncontrado
       const message: string = res.body.message
       
-      console.log(data);
-      console.log(body);
-      
+      console.log(registroEncontrado)
+
       expect(res.statusCode).toBe(200)
-      expect(message).toBe('Registros encontrados com sucesso!')
-      expect(data).toBeGreaterThanOrEqual(0)
+      expect(message).toBe('Registro encontrado com sucesso!')
+      expect(registroEncontrado).not.toHaveProperty([
+                                              'dataUltimaAtualizacao',
+                                              'dataCriacao',
+                                              '__v'
+                                            ])
+      expect(res.statusCode).not.toBe(422)
+      expect(message).not.toBe('Registro inexistente!')
       expect(res.statusCode).not.toBe(500)
       expect(message).not.toBe('Ocorreu um erro!')
+
     }
   )
-})
 
-describe('GET ramais/:ramal', () => {
-  it(`Deve retornar um registro contendo apenas nome e departamento de um registro
-      a partir do número de um ramal existente fornecido`, 
-      async ()=>{
-        const res = await request(app).get('/ramais/1111')
-        const funcionario: object = res.body.data.funcionario
-        const message: string = res.body.message
-        
-        console.log(funcionario)
-        expect(res.statusCode).toBe(200)
-        expect(message).toBe('Registro encontrado com sucesso!')
-        expect(funcionario).not.toHaveProperty([
-                                                'dataUltimaAtualizacao',
-                                                'dataCriacao',
-                                                '__v'
-                                              ])
-        expect(res.statusCode).not.toBe(422)
-        expect(message).not.toBe('Registro inexistente!')
-        expect(res.statusCode).not.toBe(500)
-        expect(message).not.toBe('Ocorreu um erro!')
-      }
-    )
-})
 
-describe('GET /ramais/nome/:string', () => {
-  it(`Busca um registro a partir de um trecho do nome de
-  um funcionário fornecido`,
+
+it(`GET /ramais/nome/:string
+    Busca um registro a partir de um trecho do nome de
+    um funcionário fornecido`,
     async () => {
-      const res = await request(app).get('/ramais/nome/an')
-      const registros: Array<object> = res.body.data.funcionario
+      const trechoNome = 'Mar'
+
+      const res: any = await request(app).get(`/ramais/nome/${trechoNome}`)
+      const registros: any = res.body.data.registro
       const message: string = res.body.message
       
       console.log(registros)
@@ -74,28 +110,36 @@ describe('GET /ramais/nome/:string', () => {
       expect(message).not.toBe('Registro inexistente!')
       expect(res.statusCode).not.toBe(500)
       expect(message).not.toBe('Ocorreu um erro!')
-    }
-  )
-})
+      
+      if(registros.length > 1){
+        registros.forEach((registro: { nome: string }) => {
+          expect(registro.nome).toMatch(`/${trechoNome}/`)
+        })
+      }
 
-describe('POST /ramais/novo', () => {
-  it(`Cria um novo registro`,
+    }
+)
+ 
+
+it(`POST /ramais/novo
+    Cria um novo registro`,
     async () => {
+
+      const novoRegistro: { nome: string, 
+                            ramal: number, 
+                            departamento: string 
+                          } = {                                                                                                                                                                                             
+                                nome: 'Roberto',
+                                ramal: 8282,
+                                departamento: 'Marketing'
+                              }
+                                
       const res = await request(app)
                                   .post('/ramais/novo')
-                                  .send({
-                                    nome: 'Jessica',
-                                    ramal: 1313,
-                                    departamento: 'Vendas'
-                                  })
+                                  .send(novoRegistro)
       
-      const novoRegistro: object = res.body.data.novoRegistro
+      const registroCriado: any = res.body.data.novoRegistro
       const message: string = res.body.message
-      
-      
-      console.log(res.body)
-      //Console para visualizar dados inseridos
-      console.log(novoRegistro)
       
       expect(res.statusCode).toBe(201)
       expect(message).toBe('Registro adicionado com sucesso!')
@@ -103,57 +147,78 @@ describe('POST /ramais/novo', () => {
       expect(message).not.toBe('Insira nome, ramal e departamento!')
       expect(res.statusCode).not.toBe(500)
       expect(message).not.toBe('Ocorreu um erro!')
-      //Testes a seguir possuem implementação duvidosa - não funcionou agrupar propriedades em array, a investigar melhor implementação
-      expect(novoRegistro).toHaveProperty('nome')
-      expect(novoRegistro).toHaveProperty('ramal')
-      expect(novoRegistro).toHaveProperty('departamento')
-      expect(novoRegistro).toHaveProperty('dataUltimaAtualizacao')
-      expect(novoRegistro).toHaveProperty('dataCriacao')
-    }
-  )
-})
 
-describe('PATCH /ramais/atualizar/:ramal', () => {
-  it(`Atualiza um registro existente de acordo com o número do ramal fornecido`,
-  async () => {
-    const res = await request(app)
-                                  .patch('/ramais/atualizar/1313')
-                                  .send({
-                                    nome: 'Adalberto',
-                                    ramal: 5656,
-                                    departamento: 'Era a Jéssica'
-                                  })
-                                  
-                                  const atualizacoes = res.body.data.atualizacoes
-      const message: string = res.body.message
-      
-      //Console para visualizar dados enviados
-      console.log(atualizacoes)    
-      
-      expect(res.statusCode).toBe(200)
-      expect(message).toBe('Registro atualizado com sucesso!')
-      expect(res.statusCode).not.toBe(400)
-      expect(message).not.toBe('Ramal inexistente!')
-      expect(res.statusCode).not.toBe(500)
-      expect(message).not.toBe('Ocorreu um erro!')
+      expect(registroCriado).toHaveProperty('nome')
+      expect(registroCriado).toHaveProperty('ramal')
+      expect(registroCriado).toHaveProperty('departamento')
+      expect(registroCriado).toHaveProperty('dataUltimaAtualizacao')
+      expect(registroCriado).toHaveProperty('dataCriacao')
+      expect(registroCriado.nome).toBe(novoRegistro.nome)
+      expect(registroCriado.ramal).toBe(novoRegistro.ramal)
+      expect(registroCriado.departamento).toBe(novoRegistro.departamento)
     }
-  )
-})
+)
+
+it(`PATCH /ramais/atualizar/:ramal
+  Atualiza um registro existente de acordo com o número do ramal fornecido`,
+  async () => {
+
+    const numeroRamal: number = 1111
+
+    const atualizacoes: { nome?: string, 
+                          ramal?: number, 
+                          departamento?: string 
+                        } = {
+                              // nome: 'Débora',
+                              ramal: 4444,
+                              departamento: 'Marketing'
+                            }
+
+    const res = await request(app)
+                                .patch(`/ramais/atualizar/${numeroRamal}`)
+                                .send(atualizacoes)
+                                
+    const registroAtualizado = res.body.data.atualizacoes
+    const message: string = res.body.message
+    
+    //Console para visualizar dados enviados
+    console.log(registroAtualizado)    
+    
+    expect(res.statusCode).toBe(200)
+    expect(message).toBe('Registro atualizado com sucesso!')
+    expect(res.statusCode).not.toBe(400)
+    expect(message).not.toBe('Ramal inexistente!')
+    expect(res.statusCode).not.toBe(500)
+    expect(message).not.toBe('Ocorreu um erro!')
+
+    expect(registroAtualizado.nome)?.toBe(atualizacoes.nome)
+    expect(registroAtualizado.ramal)?.toBe(atualizacoes.ramal)
+    expect(registroAtualizado.departamento)?.toBe(atualizacoes.departamento)
+  }
+)*/
 
 //Deletando mais de um documento com mesmo ramal- a investigar
 
-describe('DELETE /ramais/excluir/:ramal', () => {
-  it(`Exclui um registro de acordo com o número do ramal fornecido`,
-  async () => {
-      const res = await request(app).delete('/ramais/excluir/8181')
-      const message: string = res.body.message
-      
-      expect(res.statusCode).toBe(200)
-      expect(message).toBe('Registro removido!')
-      expect(res.statusCode).not.toBe(400)
-      expect(message).not.toBe('Ramal não encontrado!')
-      expect(res.statusCode).not.toBe(500)
-      expect(message).not.toBe('Ocorreu um erro!')
-    }
-  )
-})
+it(`DELETE /ramais/excluir/:ramal
+    Exclui um registro de acordo com o número do ramal fornecido`,
+    async () => {
+        const numeroRamal: number = 4242
+
+        
+        const res = await request(app).delete(`/ramais/excluir/${numeroRamal}`)
+        const message: string = res.body.message
+        
+        const registroExistente: IRamal = await Ramal.findOne({ ramal: numeroRamal })
+
+        expect(registroExistente).toBeNull();
+        
+        expect(res.statusCode).toBe(200)
+        expect(message).toBe('Registro removido!')
+        expect(res.statusCode).not.toBe(400)
+        expect(message).not.toBe('Ramal não encontrado!')
+        expect(res.statusCode).not.toBe(500)
+        expect(message).not.toBe('Ocorreu um erro!')
+        
+      }
+)
+

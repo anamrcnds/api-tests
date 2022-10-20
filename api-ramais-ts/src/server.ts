@@ -7,7 +7,7 @@ dotenv.config()
 const PORT = process.env.PORT
 
 mongoose.
-    connect(`${process.env.MONGODB_URI}`)
+    connect(process.env.MONGODB_URI)
     .then(() => {
         app.listen(PORT, () => { console.log("Servidor no ar!") } );
     })

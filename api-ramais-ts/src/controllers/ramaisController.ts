@@ -5,51 +5,50 @@ import Ramal, { IRamal }  from '../models/Ramais'
 
 const getListarRegistros = async (request: Request, response: Response): Promise<void> => {
 
-    try{
-        const ramais: Array<IRamal> = await Ramal.find()
+  try{
+    const ramais: Array<IRamal> = await Ramal.find()
 
-        return response.send_ok('Registros encontrados com sucesso!', { ramais })
-        
-    }catch {
-        return response.send_internalServerError('Ocorreu um erro!')
-    }
+    return response.send_ok('Registros encontrados com sucesso!', { ramais })
+      
+  }catch {
+    return response.send_internalServerError('Ocorreu um erro!')
+  }
 }
 
 // Lista o nome e o departamento de um funcionário de acordo com o número do ramal fornecido
 const getNomeDep = async (request: Request, response: Response): Promise<void> => {
     
-    const ramal: number = Number(request.params.ramal)
-    
-        try {
-            const funcionario: IRamal | null = await Ramal.findOne( { ramal: ramal }, { nome: 1, departamento: 1})
-            
-            if(!funcionario) return response.send_unprocessableEntity('Registro inexistente!')
-        
-            return response.send_ok('Registro encontrado com sucesso!', { funcionario })
+  const ramal: number = Number(request.params.ramal)
+  
+    try {
+      const registroEncontrado: IRamal | null = await Ramal.findOne( { ramal: ramal }, { nome: 1, departamento: 1})
+      
+      if(!registroEncontrado) return response.send_unprocessableEntity('Registro inexistente!')
+  
+        return response.send_ok('Registro encontrado com sucesso!', { registroEncontrado })
 
-        } catch {
-            return response.send_internalServerError('Ocorreu um erro!')
-        }
+    } catch {
+        return response.send_internalServerError('Ocorreu um erro!')
     }
+  }
 
 // Busca um funcionário a partir de uma parte de seu nome
 
 const getTrechoNome = async (request: Request, response: Response): Promise<void> => {
         
-        const string: string = String(request.params.string)
+    const string: string = String(request.params.string)
+    
+    try {
+        const registro: Array<IRamal> = await Ramal.find( { nome: {"$regex": `${string}` , "$options": "i"}}, {} )
         
-        try {
-            // Linha 55 não aceitou IRamal | null, apenas tipo object - a investigar
-            const funcionario: Array<IRamal> = await Ramal.find( { nome: {"$regex": `${string}` , "$options": "i"}}, {} )
-            
-            if(!funcionario) return response.send_unprocessableEntity('Registro inexistente!')
-            
-            return response.send_ok('Registro(s) encontrado(s) com sucesso!', {funcionario})
-            
-        } catch {
-            return response.send_internalServerError('Ocorreu um erro!')
-        }
+        if(!registro) return response.send_unprocessableEntity('Registro inexistente!')
+        
+        return response.send_ok('Registro(s) encontrado(s) com sucesso!', {registro})
+        
+    } catch {
+        return response.send_internalServerError('Ocorreu um erro!')
     }
+  }
 
 // Cria um novo registro
 const createRegistro = async (request: Request, response: Response): Promise<void> => {
@@ -103,7 +102,7 @@ const deleteRegistro = async (request: Request, response: Response): Promise<voi
     const ramalUrl: number = Number(request.params.ramal)
     
     //Verifica se o ramal existe na database
-    const registroValido = await Ramal.exists({ ramal: ramalUrl})
+    const registroValido = await Ramal.findOne({ ramal: ramalUrl })
     if(!registroValido) return response.send_badRequest('Ramal não encontrado!')
     
     try {
