@@ -32,8 +32,7 @@ const getNomeDep = async (request: Request, response: Response): Promise<void> =
     }
   }
 
-// Busca um funcionário a partir de uma parte de seu nome
-
+// Busca um um registro a partir do trecho do nome do funcionario 
 const getTrechoNome = async (request: Request, response: Response): Promise<void> => {
         
     const string: string = String(request.params.string)
@@ -58,6 +57,9 @@ const createRegistro = async (request: Request, response: Response): Promise<voi
     const dataCriacao: string = Date();
     const dataUltimaAtualizacao: string = Date()
     
+    const ramalExistente: number = await Ramal.findOne({ ramal: ramal }, { ramal: 1})
+
+    if(ramalExistente) return response.send_unprocessableEntity('Ramal já cadastrado!')
     if(!nome) return response.send_unprocessableEntity('Insira nome, ramal e departamento!')
     
     const novoRegistro: IRamal = {nome, ramal, departamento, dataUltimaAtualizacao, dataCriacao}
@@ -81,7 +83,7 @@ const updateRegistro = async (request: Request, response: Response): Promise<voi
         
         const dataUltimaAtualizacao: string = Date()
         
-    //Verifica se o ramal existe na database
+    //Verifica se o ramal existe na db
     const ramalValido = await Ramal.exists({ ramal: ramalUrl})
     if(!ramalValido) return response.send_badRequest('Ramal inexistente!')
     
