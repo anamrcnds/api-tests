@@ -3,7 +3,6 @@ import request from 'supertest'
 import dotenv from 'dotenv'
 import app from '../app'
 import Ramal, { IRamal } from "../models/Ramais"
-import { collapseTextChangeRangesAcrossMultipleVersions } from "typescript"
 
 dotenv.config()
 
