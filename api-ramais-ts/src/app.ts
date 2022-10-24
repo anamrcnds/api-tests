@@ -8,13 +8,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(responser)
 
-app.get("/", (req, res) => {
+app.get('/', (req, res) => {
     res.status(200).json({ alive: "True" });
 })
-.use('/ramais', ramaisRoutes)
 
-// app.use('/ramais', ramaisRoutes);
-
-
+app.use('/ramais', ramaisRoutes);
 
 export default app
