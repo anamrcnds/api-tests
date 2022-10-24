@@ -92,7 +92,7 @@ const atualizarRegistro = async (request: Request, response: Response): Promise<
         
         await Ramal.updateOne({ ramal: ramalUrl }, atualizacoes)
         
-        return response.send_ok('Registro atualizado com sucesso!', {atualizacoes})
+        return response.send_ok('Registro atualizado com sucesso!', { atualizacoes, ramalValido })
         
     } catch {
         return response.send_internalServerError('Ocorreu um erro!')

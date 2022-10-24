@@ -1,4 +1,4 @@
-import mongoose from "mongoose"
+import mongoose, { ObjectId } from "mongoose"
 import request from 'supertest'
 import dotenv from 'dotenv'
 import app from '../app'
@@ -6,61 +6,62 @@ import Ramal, { IRamal } from "../models/Ramais"
 
 dotenv.config()
 
-beforeEach(async() => {
-    await mongoose.connect(`${process.env.MONGODB_URI}`)
-})
-
-afterEach(async() => {
-  await mongoose.connection.close()
-})
 
 describe(`Testa todas as rotas`, () => { 
+  
+  beforeAll(async() => {
+      await mongoose.connect(`${process.env.MONGODB_URI}`)
+  })
+  
+  afterAll(async() => {
+    await mongoose.connection.close()
+  })
+  
+    it(`POST /ramais/novo
+      Cria um novo registro`,
+      async () => {
+        
+        // Dados do novo registro
+        const novoRegistro: { nome: string, 
+                              ramal: number, 
+                              departamento: string 
+                            } = {                                                                                                                                                                                             
+                              nome: 'Carolina',
+                              ramal: 8684,
+                              departamento: 'Vendas'
+                            }
+        
+        const res = await request(app)
+                                      .post('/ramais/novo')
+                                      .send(novoRegistro)
+            
 
-        it(`POST /ramais/novo
-        Cria um novo registro`,
-        async () => {
-          
-          // Dados do novo registro
-          const novoRegistro: { nome: string, 
-                                ramal: number, 
-                                departamento: string 
-                              } = {                                                                                                                                                                                             
-                                nome: 'Carolina',
-                                ramal: 8684,
-                                departamento: 'Vendas'
-                              }
-          
-          const res = await request(app)
-                                        .post('/ramais/novo')
-                                        .send(novoRegistro)
-              
+        const registroCriado: IRamal = res.body.data.novoRegistro
+        const message: string = res.body.message
+        const statusCode = res.body.code
+        
+        expect(statusCode).toBe(201)
+        expect(message).toBe('Registro adicionado com sucesso!')
+        expect(statusCode).not.toBe(422)
+        expect(message).not.toBe('Ramal já cadastrado!')
+        expect(statusCode).not.toBe(422)
+        expect(message).not.toBe('Insira nome, ramal e departamento!')
+        expect(statusCode).not.toBe(500)
+        expect(message).not.toBe('Ocorreu um erro!')
 
-          const registroCriado: IRamal = res.body.data.novoRegistro
-          const message: string = res.body.message
-          const statusCode = res.body.code
-          
-          expect(statusCode).toBe(201)
-          expect(message).toBe('Registro adicionado com sucesso!')
-          expect(statusCode).not.toBe(422)
-          expect(message).not.toBe('Ramal já cadastrado!')
-          expect(statusCode).not.toBe(422)
-          expect(message).not.toBe('Insira nome, ramal e departamento!')
-          expect(statusCode).not.toBe(500)
-          expect(message).not.toBe('Ocorreu um erro!')
+        // console.log('REGISTRO CRIADO = ', registroCriado)
 
-          // console.log('REGISTRO CRIADO = ', registroCriado)
+        expect(registroCriado.nome).toBeDefined()
+        expect(registroCriado.ramal).toBeDefined()
+        expect(registroCriado.departamento).toBeDefined()
+        expect(registroCriado.dataUltimaAtualizacao).toBeDefined()
+        expect(registroCriado.dataCriacao).toBeDefined()
+      }
+    )
 
-          expect(registroCriado.nome).toBeDefined()
-          expect(registroCriado.ramal).toBeDefined()
-          expect(registroCriado.departamento).toBeDefined()
-          expect(registroCriado.dataUltimaAtualizacao).toBeDefined()
-          expect(registroCriado.dataCriacao).toBeDefined()
-        }
-        )
-
-        it(`PATCH /ramais/atualizar/:ramal
-        Atualiza um registro existente de acordo com o número do ramal fornecido`,
-        async () => {
+    it(`PATCH /ramais/atualizar/:ramal
+      Atualiza um registro existente de acordo com o número do ramal fornecido`,
+      async () => {
 
         type registroAtualizar = { 
           nome?: string, 
@@ -77,8 +78,8 @@ describe(`Testa todas as rotas`, () => {
                                                 }
                                 
         const res = await request(app)
-                                      .patch(`/ramais/atualizar/${numeroRamal}`)
-                                      .send(atualizacoes)
+          .patch(`/ramais/atualizar/${numeroRamal}`)
+          .send(atualizacoes)
                                     
         const registroAtualizado = res.body.data.atualizacoes
         const message: string = res.body.message  
@@ -93,13 +94,14 @@ describe(`Testa todas as rotas`, () => {
         expect(registroAtualizado.nome)?.toBe(atualizacoes.nome)
         expect(registroAtualizado.ramal)?.toBe(atualizacoes.ramal)
         expect(registroAtualizado.departamento)?.toBe(atualizacoes.departamento)
-        }
-        )
+      }
+    )
 
     it(`GET /ramais
         Deve retornar todos os registros de ramais`, async () =>{
 
         const res: any = await request(app).get('/ramais')
+
         const dataSetSize: number= res.body.data.ramais.length
         const dataSet: Array<object> = res.body.data.ramais
         const message: string = res.body.message
@@ -150,6 +152,7 @@ describe(`Testa todas as rotas`, () => {
           }
           
         const res: any = await request(app).get(`/ramais/${numeroRamal}`)
+
         const registroEncontrado: registroNomeDpto = res.body.data
         const message: string = res.body.message
         
@@ -177,6 +180,7 @@ describe(`Testa todas as rotas`, () => {
           const trechoNome = 'ar'
 
           const res: any = await request(app).get(`/ramais/nome/${trechoNome}`)
+
           const registrosEncontrados: any = res.body.data
           const message: string = res.body.message
           
@@ -201,9 +205,10 @@ describe(`Testa todas as rotas`, () => {
     it(`DELETE /ramais/excluir/:ramal
       Exclui um registro de acordo com o número do ramal fornecido`,
       async () => {
-        const numeroRamal: number = 7
+        const numeroRamal: number = 8684
         
         const res = await request(app).delete(`/ramais/excluir/${numeroRamal}`)
+        
         const message: string = res.body.message
         
         const registroExistente: IRamal | null = await Ramal.findOne({ ramal: numeroRamal })
