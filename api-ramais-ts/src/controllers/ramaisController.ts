@@ -3,7 +3,7 @@ import Ramal, { IRamal }  from '../models/Ramais'
 
 //Lista todos os registros
 
-const getListarRegistros = async (request: Request, response: Response): Promise<void> => {
+const listarRegistros = async (request: Request, response: Response): Promise<void> => {
 
   try{
     const ramais: Array<IRamal> = await Ramal.find()
@@ -16,7 +16,7 @@ const getListarRegistros = async (request: Request, response: Response): Promise
 }
 
 // Lista o nome e o departamento de um funcionário de acordo com o número do ramal fornecido
-const getNomeDep = async (request: Request, response: Response): Promise<void> => {
+const listarNomeDep = async (request: Request, response: Response): Promise<void> => {
     
   const ramal: number = Number(request.params.ramal)
   
@@ -33,7 +33,7 @@ const getNomeDep = async (request: Request, response: Response): Promise<void> =
   }
 
 // Busca um um registro a partir do trecho do nome do funcionario 
-const getTrechoNome = async (request: Request, response: Response): Promise<void> => {
+const listarTrechoNome = async (request: Request, response: Response): Promise<void> => {
         
     const string: string = String(request.params.string)
     
@@ -50,7 +50,7 @@ const getTrechoNome = async (request: Request, response: Response): Promise<void
   }
 
 // Cria um novo registro
-const createRegistro = async (request: Request, response: Response): Promise<void> => {
+const novoRegistro = async (request: Request, response: Response): Promise<void> => {
         
         
     const { nome, ramal, departamento }: { nome: string, ramal: number, departamento: string } = request.body
@@ -75,7 +75,7 @@ const createRegistro = async (request: Request, response: Response): Promise<voi
 }
    
 // Atualiza um novo registro já existente de acordo com o número do ramal fornecido
-const updateRegistro = async (request: Request, response: Response): Promise<void> => {
+const atualizarRegistro = async (request: Request, response: Response): Promise<void> => {
     const ramalUrl: number = Number(request.params.ramal)
     
     const { nome, ramal, departamento, dataCriacao }
@@ -100,7 +100,7 @@ const updateRegistro = async (request: Request, response: Response): Promise<voi
 }
 
 // Exclui um registro de acordo com o número do ramal fornecido
-const deleteRegistro = async (request: Request, response: Response): Promise<void> => {
+const excluirRegistro = async (request: Request, response: Response): Promise<void> => {
     const ramalUrl: number = Number(request.params.ramal)
     
     //Verifica se o ramal existe na database
@@ -119,10 +119,10 @@ const deleteRegistro = async (request: Request, response: Response): Promise<voi
 }
 
 export {
-	getListarRegistros,
-	getNomeDep,
-	getTrechoNome, 
-	createRegistro,
-	updateRegistro,
-	deleteRegistro
+	listarRegistros,
+	listarNomeDep,
+	listarTrechoNome, 
+	novoRegistro,
+	atualizarRegistro,
+	excluirRegistro
 }
