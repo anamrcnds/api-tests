@@ -4,7 +4,7 @@ import app from './app'
 
 dotenv.config()
 
-const PORT = process.env.PORT
+const PORT = process.env.PORT || 5000
 
 mongoose.
     connect(process.env.MONGODB_URI)
