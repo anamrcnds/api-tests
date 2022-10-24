@@ -83,8 +83,8 @@ describe(`
               it(`DELETE /ramais/excluir/:ramal
                   Excluindo registros com ramais: 1, 2 e 3`,
                   async () => {
-                    // const ramaisExcluir: Array<number> = [1, 2, 3]
-                    const ramaisExcluir: Array<number> = [1, 2, 3, 4, 5, 6, 7]
+                    const ramaisExcluir: Array<number> = [1, 2, 3]
+                    // const ramaisExcluir: Array<number> = [1, 2, 3, 4, 5, 6, 7]
                     
                     const excluidos = ramaisExcluir.map( async (numeroRamal: number) => {
 

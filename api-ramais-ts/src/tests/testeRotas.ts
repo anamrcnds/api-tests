@@ -71,7 +71,7 @@ describe(`Testa todas as rotas`, () => {
         const numeroRamal: number = 8684
 
         const atualizacoes: registroAtualizar = {
-                                                  nome: 'Débora',
+                                                  // nome: 'Débora',
                                                   // ramal: 9494,
                                                   departamento: 'Marketing'
                                                 }
@@ -201,7 +201,7 @@ describe(`Testa todas as rotas`, () => {
     it(`DELETE /ramais/excluir/:ramal
       Exclui um registro de acordo com o número do ramal fornecido`,
       async () => {
-        const numeroRamal: number = 8684
+        const numeroRamal: number = 7
         
         const res = await request(app).delete(`/ramais/excluir/${numeroRamal}`)
         const message: string = res.body.message
