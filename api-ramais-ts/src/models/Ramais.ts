@@ -1,21 +1,28 @@
 import { Schema, model } from 'mongoose'
 
 export interface IRamal{
-    nome: String;
-    ramal: Number;
-    departamento: String;
-    dataUltimaAtualizacao: String;
-    dataCriacao: String;
+    nome: string;
+    sobrenome: string;
+    ramal: number;
+    departamento: string;
+    dataUltimaAtualizacao: string;
+    dataCriacao: string;
 }
 
 const RamalSchema = new Schema<IRamal>({
     nome: { type: String, required: true },
+    sobrenome: { type: String, required: true },
     ramal: { type: Number, required: true },
     departamento: { type: String, required: true },
     dataUltimaAtualizacao: { type: String, required: true },
     dataCriacao: { type: String, required: true },
+    
 });
 
-const Ramal = model<IRamal>('Ramais', RamalSchema)
+RamalSchema.virtual('nomeCompleto')
+.get(function (nome, sobrenome) {
+  return `${this.nome} ${this.sobrenome}`}).
 
-export default Ramal;
+const Ramal = model<IRamal>('Ramais', RamalSchema);
+
+export default Ramal

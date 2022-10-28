@@ -21,8 +21,12 @@ const listarNomeDep = async (request: Request, response: Response): Promise<void
   const ramal: number = Number(request.params.ramal)
   
     try {
-      const registroEncontrado: IRamal | null = await Ramal.findOne( { ramal: ramal }, { nome: 1, departamento: 1})
+      // const registroEncontrado: IRamal | null = await Ramal.findOne( { ramal: ramal }, { nome: 1, departamento: 1})
+      const registroEncontrado: IRamal | null = await Ramal.findOne( { ramal: ramal })
+
       
+      
+
       if(!registroEncontrado) return response.send_unprocessableEntity('Registro inexistente!')
   
         return response.send_ok('Registro encontrado com sucesso!', { registroEncontrado })
@@ -53,7 +57,7 @@ const listarTrechoNome = async (request: Request, response: Response): Promise<v
 const novoRegistro = async (request: Request, response: Response): Promise<void> => {
         
         
-    const { nome, ramal, departamento }: { nome: string, ramal: number, departamento: string } = request.body
+    const { nome, sobrenome, ramal, departamento }: { nome: string, sobrenome: string, ramal: number, departamento: string } = request.body
     const dataCriacao: string = Date();
     const dataUltimaAtualizacao: string = Date()
     
@@ -62,7 +66,7 @@ const novoRegistro = async (request: Request, response: Response): Promise<void>
     if(ramalExistente) return response.send_unprocessableEntity('Ramal já cadastrado!')
     if(!nome) return response.send_unprocessableEntity('Insira nome, ramal e departamento!')
     
-    const novoRegistro: IRamal = {nome, ramal, departamento, dataUltimaAtualizacao, dataCriacao}
+    const novoRegistro: IRamal = {nome, sobrenome, ramal, departamento, dataUltimaAtualizacao, dataCriacao}
     
     try {
         await Ramal.create(novoRegistro)
@@ -78,8 +82,8 @@ const novoRegistro = async (request: Request, response: Response): Promise<void>
 const atualizarRegistro = async (request: Request, response: Response): Promise<void> => {
     const ramalUrl: number = Number(request.params.ramal)
     
-    const { nome, ramal, departamento, dataCriacao }
-        : {nome: string, ramal: number, departamento: string, dataCriacao: string} = request.body
+    const { nome, sobrenome, ramal, departamento, dataCriacao }
+        : {nome: string, sobrenome: string, ramal: number, departamento: string, dataCriacao: string} = request.body
         
         const dataUltimaAtualizacao: string = Date()
         
@@ -88,7 +92,7 @@ const atualizarRegistro = async (request: Request, response: Response): Promise<
     if(!ramalValido) return response.send_badRequest('Ramal inexistente!')
     
     try {
-        const atualizacoes: IRamal= { nome, ramal, departamento, dataUltimaAtualizacao , dataCriacao }
+        const atualizacoes: IRamal= { nome, sobrenome, ramal, departamento, dataUltimaAtualizacao , dataCriacao }
         
         await Ramal.updateOne({ ramal: ramalUrl }, atualizacoes)
         
